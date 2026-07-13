@@ -37,6 +37,7 @@ processors:
       - context: log
         statements:
           - set(attributes["severity_text"], severity_text)
+          - set(attributes["loki.format"], "raw")
 
   # Promote severity_text log attribute to a Loki label.
   attributes/loki:

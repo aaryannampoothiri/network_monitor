@@ -251,7 +251,7 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
-                    "expr": "rate(process_cpu_seconds_total{exported_job=\"$service_name\"}[1m])",
+                    "expr": "otel_rpm_process_cpu_percent{exported_job=\"$service_name\"} / 100",
                     "legendFormat": "{{exported_job}} - CPU",
                     "refId": "A"
                 }
@@ -312,7 +312,7 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
-                    "expr": "process_resident_memory_bytes{exported_job=\"$service_name\"}",
+                    "expr": "otel_rpm_process_memory_rss_mb{exported_job=\"$service_name\"} *1048576",
                     "legendFormat": "{{exported_job}} - Memory",
                     "refId": "A"
                 }
@@ -720,16 +720,16 @@
         "list": [
             {
                 "current": {
-                    "text": "",
-                    "value": ""
+                    "text": "All",
+                    "value": "$__all"
                 },
+                "includeAll": true,
                 "datasource": {
                     "type": "prometheus",
                     "uid": "prometheus-datasource-uid"
                 },
                 "definition": "",
                 "hide": 0,
-                "includeAll": false,
                 "multi": false,
                 "name": "service_name",
                 "options": [],
