@@ -30,14 +30,15 @@
             "fieldConfig": {
                 "defaults": {
                     "color": {
-                        "mode": "continuous-GrYlRd"
+                        "mode": "thresholds"
                     },
                     "mappings": [],
                     "thresholds": {
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -56,11 +57,9 @@
             },
             "id": 1,
             "options": {
-                "displayMode": "lcd",
-                "maxVizHeight": 300,
-                "minVizHeight": 75,
-                "minVizWidth": 75,
-                "namePlacement": "auto",
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
                 "orientation": "horizontal",
                 "reduceOptions": {
                     "calcs": [
@@ -69,20 +68,25 @@
                     "fields": "",
                     "values": false
                 },
-                "showUnfilled": true,
-                "sizing": "auto",
-                "valueMode": "color"
+                "textMode": "auto",
+                "wideLayout": true
             },
             "pluginVersion": "10.2.3",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
                     "expr": "sum(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"})",
+                    "range": true,
                     "refId": "A"
                 }
             ],
             "title": "Total FHIR Requests",
             "transparent": true,
-            "type": "bargauge"
+            "type": "stat"
         },
         {
             "datasource": {
@@ -96,7 +100,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -133,7 +138,13 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
                     "expr": "sum(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\", http_status_code=~\"[23]..\"}) / sum(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}) * 100",
+                    "range": true,
                     "refId": "A"
                 }
             ],
@@ -153,7 +164,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -190,7 +202,13 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
                     "expr": "sum(otel_http_server_active_requests{exported_job=\"$service_name\"})",
+                    "range": true,
                     "refId": "A"
                 }
             ],
@@ -214,7 +232,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -233,6 +252,7 @@
                 "y": 0
             },
             "id": 4,
+            "maxDataPoints": 994,
             "options": {
                 "minVizHeight": 200,
                 "minVizWidth": 200,
@@ -251,12 +271,19 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
-                    "expr": "otel_rpm_process_cpu_percent{exported_job=\"$service_name\"} / 100",
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(otel_rpm_process_cpu_percent{exported_job=\"$service_name\"}/100) ",
                     "legendFormat": "{{exported_job}} - CPU",
+                    "range": true,
                     "refId": "A"
                 }
             ],
             "title": "Application CPU Usage",
+            "transparent": true,
             "type": "gauge"
         },
         {
@@ -275,7 +302,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -312,12 +340,19 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
-                    "expr": "otel_rpm_process_memory_rss_mb{exported_job=\"$service_name\"} *1048576",
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(otel_rpm_process_memory_rss_mb_MB{exported_job=\"$service_name\"} * 1048576)",
                     "legendFormat": "{{exported_job}} - Memory",
+                    "range": true,
                     "refId": "A"
                 }
             ],
             "title": "Application Memory Usage",
+            "transparent": true,
             "type": "gauge"
         },
         {
@@ -367,7 +402,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -399,16 +435,30 @@
             },
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
                     "expr": "sum by (resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_sum{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\")) / sum by (resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\"))",
                     "legendFormat": "{{resource_type}} - Avg",
+                    "range": true,
                     "refId": "A"
                 },
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
                     "expr": "histogram_quantile(0.95, sum by (le, resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_bucket{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\")))",
                     "legendFormat": "{{resource_type}} - P95",
                     "refId": "B"
                 },
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
                     "expr": "histogram_quantile(0.99, sum by (le, resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_bucket{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\")))",
                     "legendFormat": "{{resource_type}} - P99",
                     "refId": "C"
@@ -437,7 +487,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -459,7 +510,8 @@
                                     "mode": "absolute",
                                     "steps": [
                                         {
-                                            "color": "green"
+                                            "color": "green",
+                                            "value": null
                                         },
                                         {
                                             "color": "yellow",
@@ -490,7 +542,8 @@
                                     "mode": "absolute",
                                     "steps": [
                                         {
-                                            "color": "green"
+                                            "color": "green",
+                                            "value": null
                                         },
                                         {
                                             "color": "yellow",
@@ -510,7 +563,7 @@
             "gridPos": {
                 "h": 8,
                 "w": 12,
-                "x": 10,
+                "x": 12,
                 "y": 4
             },
             "id": 6,
@@ -529,7 +582,13 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
-                    "expr": "{service_name=\"$service_name\"} | json | duration > 0",
+                    "datasource": {
+                        "type": "loki",
+                        "uid": "loki-datasource-uid"
+                    },
+                    "editorMode": "code",
+                    "expr": "{service_name=\"rpm-backend\"} | json | duration > 0",
+                    "queryType": "range",
                     "refId": "A"
                 }
             ],
@@ -618,14 +677,105 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
                     "expr": "sum by (resource_type) (label_replace(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}, \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\"))",
                     "legendFormat": "{{resource_type}}",
+                    "range": true,
                     "refId": "A"
                 }
             ],
             "title": "FHIR Requests by Resource Type",
             "transparent": true,
             "type": "piechart"
+        },
+        {
+            "datasource": {
+                "type": "tempo",
+                "uid": "tempo-datasource-uid"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 12
+            },
+            "id": 12,
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true
+            },
+            "pluginVersion": "10.2.3",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "tempo",
+                        "uid": "tempo-datasource-uid"
+                    },
+                    "filters": [
+                        {
+                            "id": "2cf226b4",
+                            "operator": "=",
+                            "scope": "span"
+                        },
+                        {
+                            "id": "service-name",
+                            "operator": "=",
+                            "scope": "resource",
+                            "tag": "service.name",
+                            "value": [
+                                "rpm-backend"
+                            ],
+                            "valueType": "string"
+                        }
+                    ],
+                    "limit": 100,
+                    "queryType": "traceqlSearch",
+                    "refId": "A",
+                    "tableType": "traces"
+                }
+            ],
+            "title": "Traces",
+            "transformations": [],
+            "transparent": true,
+            "type": "table"
         },
         {
             "datasource": {
@@ -646,7 +796,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -679,35 +830,19 @@
             "pluginVersion": "10.2.3",
             "targets": [
                 {
-                    "expr": "{service_name=\"$service_name\", severity_text=~\"$log_level\"}",
+                    "datasource": {
+                        "type": "loki",
+                        "uid": "loki-datasource-uid"
+                    },
+                    "editorMode": "code",
+                    "expr": "{service_name=\"rpm-backend\", severity_text=~\"$log_level\"}",
+                    "queryType": "range",
                     "refId": "A"
                 }
             ],
             "title": "Logs",
             "transparent": true,
             "type": "table"
-        },
-        {
-            "datasource": {
-                "type": "tempo",
-                "uid": "tempo-datasource-uid"
-            },
-            "gridPos": {
-                "h": 10,
-                "w": 24,
-                "x": 0,
-                "y": 30
-            },
-            "id": 8,
-            "targets": [
-                {
-                    "queryType": "search",
-                    "refId": "A",
-                    "serviceName": "$service_name"
-                }
-            ],
-            "title": "Traces",
-            "type": "traces"
         }
     ],
     "refresh": "5s",
@@ -720,16 +855,17 @@
         "list": [
             {
                 "current": {
+                    "selected": false,
                     "text": "All",
                     "value": "$__all"
                 },
-                "includeAll": true,
                 "datasource": {
                     "type": "prometheus",
                     "uid": "prometheus-datasource-uid"
                 },
                 "definition": "",
                 "hide": 0,
+                "includeAll": true,
                 "multi": false,
                 "name": "service_name",
                 "options": [],
@@ -789,13 +925,13 @@
         ]
     },
     "time": {
-        "from": "now-12h",
+        "from": "now-3h",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "",
     "title": "FHIR Observability Dashboard",
     "uid": "fhir-observability",
-    "version": 20,
+    "version": 50,
     "weekStart": ""
 }
