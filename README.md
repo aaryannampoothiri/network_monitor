@@ -1,6 +1,6 @@
 # Network Monitor (Observability Stack)
 
-> **Note on RPM System**: This monitoring stack is designed to run alongside the core RPM application. You can find the main **Remote Patient Monitoring System (RPM) v2** repository here: [rpm-system-v2](https://github.com/aaryannampoothiri/rpm-system-v2). 
+> **Note on RPM System**: This monitoring stack is designed to run alongside the core RPM application. You can find the main **Remote Patient Monitoring System (RPM) v2** repository here: [rpm-system-v2](https://github.com/rohith1612/rpm-system-v2). 
 
 ## Overview
 
