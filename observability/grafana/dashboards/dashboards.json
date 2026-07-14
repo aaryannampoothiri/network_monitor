@@ -51,7 +51,7 @@
             },
             "gridPos": {
                 "h": 4,
-                "w": 4,
+                "w": 10,
                 "x": 0,
                 "y": 0
             },
@@ -60,7 +60,7 @@
                 "colorMode": "value",
                 "graphMode": "area",
                 "justifyMode": "auto",
-                "orientation": "horizontal",
+                "orientation": "auto",
                 "reduceOptions": {
                     "calcs": [
                         "lastNotNull"
@@ -95,6 +95,71 @@
             },
             "fieldConfig": {
                 "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        }
+                    },
+                    "mappings": []
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 12,
+                "w": 6,
+                "x": 10,
+                "y": 0
+            },
+            "id": 3,
+            "options": {
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "pieType": "pie",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.2.3",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum by (resource_type) (label_replace(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}, \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\"))",
+                    "legendFormat": "{{resource_type}}",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Requests by Resource Type",
+            "transparent": true,
+            "type": "piechart"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus-datasource-uid"
+            },
+            "fieldConfig": {
+                "defaults": {
                     "mappings": [],
                     "thresholds": {
                         "mode": "absolute",
@@ -102,10 +167,6 @@
                             {
                                 "color": "green",
                                 "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
                             }
                         ]
                     },
@@ -116,7 +177,7 @@
             "gridPos": {
                 "h": 4,
                 "w": 4,
-                "x": 4,
+                "x": 16,
                 "y": 0
             },
             "id": 10,
@@ -168,8 +229,16 @@
                                 "value": null
                             },
                             {
+                                "color": "#6ED0E0",
+                                "value": 0
+                            },
+                            {
+                                "color": "#EAB839",
+                                "value": 3
+                            },
+                            {
                                 "color": "red",
-                                "value": 80
+                                "value": 5
                             }
                         ]
                     },
@@ -180,7 +249,7 @@
             "gridPos": {
                 "h": 4,
                 "w": 4,
-                "x": 9,
+                "x": 20,
                 "y": 0
             },
             "id": 11,
@@ -224,8 +293,7 @@
             "fieldConfig": {
                 "defaults": {
                     "color": {
-                        "fixedColor": "#8F3BB8",
-                        "mode": "fixed"
+                        "mode": "continuous-YlBl"
                     },
                     "mappings": [],
                     "thresholds": {
@@ -241,21 +309,23 @@
                             }
                         ]
                     },
-                    "unit": "percentunit"
+                    "unit": "ms"
                 },
                 "overrides": []
             },
             "gridPos": {
-                "h": 4,
-                "w": 5,
-                "x": 14,
-                "y": 0
+                "h": 8,
+                "w": 10,
+                "x": 0,
+                "y": 4
             },
-            "id": 4,
-            "maxDataPoints": 994,
+            "id": 2,
             "options": {
-                "minVizHeight": 200,
-                "minVizWidth": 200,
+                "displayMode": "gradient",
+                "maxVizHeight": 102,
+                "minVizHeight": 13,
+                "minVizWidth": 20,
+                "namePlacement": "auto",
                 "orientation": "auto",
                 "reduceOptions": {
                     "calcs": [
@@ -264,9 +334,9 @@
                     "fields": "",
                     "values": false
                 },
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto"
+                "showUnfilled": false,
+                "sizing": "manual",
+                "valueMode": "color"
             },
             "pluginVersion": "10.2.3",
             "targets": [
@@ -276,84 +346,15 @@
                         "uid": "prometheus-datasource-uid"
                     },
                     "editorMode": "code",
-                    "expr": "sum(otel_rpm_process_cpu_percent{exported_job=\"$service_name\"}/100) ",
-                    "legendFormat": "{{exported_job}} - CPU",
+                    "expr": "sum by (resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_sum{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\")) / sum by (resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\"))",
+                    "legendFormat": "{{resource_type}} - Avg",
                     "range": true,
                     "refId": "A"
                 }
             ],
-            "title": "Application CPU Usage",
+            "title": "Time Taken by Requests",
             "transparent": true,
-            "type": "gauge"
-        },
-        {
-            "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus-datasource-uid"
-            },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "fixedColor": "dark-green",
-                        "mode": "fixed"
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "bytes"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 4,
-                "w": 5,
-                "x": 19,
-                "y": 0
-            },
-            "id": 5,
-            "options": {
-                "minVizHeight": 200,
-                "minVizWidth": 200,
-                "orientation": "auto",
-                "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
-                    "fields": "",
-                    "values": false
-                },
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto"
-            },
-            "pluginVersion": "10.2.3",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "prometheus-datasource-uid"
-                    },
-                    "editorMode": "code",
-                    "expr": "sum(otel_rpm_process_memory_rss_mb_MB{exported_job=\"$service_name\"} * 1048576)",
-                    "legendFormat": "{{exported_job}} - Memory",
-                    "range": true,
-                    "refId": "A"
-                }
-            ],
-            "title": "Application Memory Usage",
-            "transparent": true,
-            "type": "gauge"
+            "type": "bargauge"
         },
         {
             "datasource": {
@@ -372,9 +373,9 @@
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
-                        "drawStyle": "bars",
-                        "fillOpacity": 100,
-                        "gradientMode": "hue",
+                        "drawStyle": "line",
+                        "fillOpacity": 25,
+                        "gradientMode": "none",
                         "hideFrom": {
                             "legend": false,
                             "tooltip": false,
@@ -391,7 +392,104 @@
                         "spanNulls": false,
                         "stacking": {
                             "group": "A",
-                            "mode": "normal"
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 8,
+                "x": 16,
+                "y": 4
+            },
+            "id": 4,
+            "maxDataPoints": 994,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "hidden",
+                    "placement": "right",
+                    "showLegend": false
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.2.3",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
+                    "expr": "otel_rpm_process_cpu_percent{exported_job=\"$service_name\"}/100",
+                    "legendFormat": "{{exported_job}} - CPU",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Application CPU Usage",
+            "transparent": true,
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus-datasource-uid"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-GrYlRd"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 20,
+                        "gradientMode": "scheme",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 3,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
                         },
                         "thresholdsStyle": {
                             "mode": "off"
@@ -416,11 +514,11 @@
             },
             "gridPos": {
                 "h": 8,
-                "w": 10,
-                "x": 0,
-                "y": 4
+                "w": 8,
+                "x": 16,
+                "y": 11
             },
-            "id": 2,
+            "id": 5,
             "options": {
                 "legend": {
                     "calcs": [],
@@ -433,6 +531,7 @@
                     "sort": "none"
                 }
             },
+            "pluginVersion": "10.2.3",
             "targets": [
                 {
                     "datasource": {
@@ -440,31 +539,109 @@
                         "uid": "prometheus-datasource-uid"
                     },
                     "editorMode": "code",
-                    "expr": "sum by (resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_sum{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\")) / sum by (resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\"))",
-                    "legendFormat": "{{resource_type}} - Avg",
+                    "expr": "otel_rpm_process_memory_rss_mb_MB{exported_job=\"$service_name\"}",
+                    "legendFormat": "{{exported_job}} - Memory",
                     "range": true,
                     "refId": "A"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "prometheus-datasource-uid"
-                    },
-                    "expr": "histogram_quantile(0.95, sum by (le, resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_bucket{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\")))",
-                    "legendFormat": "{{resource_type}} - P95",
-                    "refId": "B"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "prometheus-datasource-uid"
-                    },
-                    "expr": "histogram_quantile(0.99, sum by (le, resource_type) (label_replace(rate(otel_http_server_duration_milliseconds_bucket{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}[1m]), \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\")))",
-                    "legendFormat": "{{resource_type}} - P99",
-                    "refId": "C"
                 }
             ],
-            "title": "Time Taken by FHIR Requests",
+            "title": "Application Memory Usage",
+            "transparent": true,
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus-datasource-uid"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 16,
+                "x": 0,
+                "y": 12
+            },
+            "id": 14,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.2.3",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus-datasource-uid"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum by (resource_type) (label_replace(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}, \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\"))",
+                    "legendFormat": "{{resource_type}}",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Requests by Resource Type",
             "transparent": true,
             "type": "timeseries"
         },
@@ -561,10 +738,10 @@
                 ]
             },
             "gridPos": {
-                "h": 8,
-                "w": 12,
-                "x": 12,
-                "y": 4
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 19
             },
             "id": 6,
             "options": {
@@ -577,7 +754,8 @@
                     ],
                     "show": false
                 },
-                "showHeader": true
+                "showHeader": true,
+                "sortBy": []
             },
             "pluginVersion": "10.2.3",
             "targets": [
@@ -587,7 +765,7 @@
                         "uid": "loki-datasource-uid"
                     },
                     "editorMode": "code",
-                    "expr": "{service_name=\"rpm-backend\"} | json | duration > 0",
+                    "expr": "{service_name=\"rpm-backend1\"} | json | duration > 0",
                     "queryType": "range",
                     "refId": "A"
                 }
@@ -629,71 +807,6 @@
         },
         {
             "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus-datasource-uid"
-            },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
-                        }
-                    },
-                    "mappings": []
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 8,
-                "w": 12,
-                "x": 0,
-                "y": 12
-            },
-            "id": 3,
-            "options": {
-                "legend": {
-                    "displayMode": "list",
-                    "placement": "bottom",
-                    "showLegend": true
-                },
-                "pieType": "pie",
-                "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
-                    "fields": "",
-                    "values": false
-                },
-                "tooltip": {
-                    "mode": "single",
-                    "sort": "none"
-                }
-            },
-            "pluginVersion": "10.2.3",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "prometheus-datasource-uid"
-                    },
-                    "editorMode": "code",
-                    "expr": "sum by (resource_type) (label_replace(otel_http_server_duration_milliseconds_count{exported_job=\"$service_name\", http_target=~\"/api/$resource_type.*\"}, \"resource_type\", \"$1\", \"http_target\", \"/api/([^/]+).*\"))",
-                    "legendFormat": "{{resource_type}}",
-                    "range": true,
-                    "refId": "A"
-                }
-            ],
-            "title": "FHIR Requests by Resource Type",
-            "transparent": true,
-            "type": "piechart"
-        },
-        {
-            "datasource": {
                 "type": "tempo",
                 "uid": "tempo-datasource-uid"
             },
@@ -725,11 +838,11 @@
             },
             "gridPos": {
                 "h": 8,
-                "w": 12,
-                "x": 12,
-                "y": 12
+                "w": 24,
+                "x": 0,
+                "y": 29
             },
-            "id": 12,
+            "id": 13,
             "options": {
                 "cellHeight": "sm",
                 "footer": {
@@ -751,22 +864,24 @@
                     },
                     "filters": [
                         {
-                            "id": "2cf226b4",
+                            "id": "6319e21e",
                             "operator": "=",
                             "scope": "span"
                         },
                         {
                             "id": "service-name",
-                            "operator": "=",
+                            "operator": "=~",
                             "scope": "resource",
                             "tag": "service.name",
                             "value": [
-                                "rpm-backend"
+                                "rpm-backend1",
+                                "$service_name"
                             ],
                             "valueType": "string"
                         }
                     ],
-                    "limit": 100,
+                    "key": "Q-a342f440-dce6-427d-bf3d-b312df7ac656-0",
+                    "limit": 20,
                     "queryType": "traceqlSearch",
                     "refId": "A",
                     "tableType": "traces"
@@ -782,50 +897,22 @@
                 "type": "loki",
                 "uid": "loki-datasource-uid"
             },
-            "fieldConfig": {
-                "defaults": {
-                    "custom": {
-                        "align": "auto",
-                        "cellOptions": {
-                            "type": "auto"
-                        },
-                        "inspect": false
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    }
-                },
-                "overrides": []
-            },
             "gridPos": {
                 "h": 10,
                 "w": 24,
                 "x": 0,
-                "y": 20
+                "y": 37
             },
             "id": 7,
             "options": {
-                "cellHeight": "sm",
-                "footer": {
-                    "countRows": false,
-                    "fields": "",
-                    "reducer": [
-                        "sum"
-                    ],
-                    "show": false
-                },
-                "showHeader": true
+                "dedupStrategy": "none",
+                "enableLogDetails": true,
+                "prettifyLogMessage": false,
+                "showCommonLabels": false,
+                "showLabels": true,
+                "showTime": true,
+                "sortOrder": "Descending",
+                "wrapLogMessage": false
             },
             "pluginVersion": "10.2.3",
             "targets": [
@@ -835,17 +922,17 @@
                         "uid": "loki-datasource-uid"
                     },
                     "editorMode": "code",
-                    "expr": "{service_name=\"rpm-backend\", severity_text=~\"$log_level\"}",
+                    "expr": "{service_name=\"rpm-backend1\", severity_text=~\"$log_level\"}",
                     "queryType": "range",
                     "refId": "A"
                 }
             ],
             "title": "Logs",
             "transparent": true,
-            "type": "table"
+            "type": "logs"
         }
     ],
-    "refresh": "5s",
+    "refresh": "",
     "schemaVersion": 39,
     "tags": [
         "observability",
@@ -855,9 +942,9 @@
         "list": [
             {
                 "current": {
-                    "selected": false,
-                    "text": "All",
-                    "value": "$__all"
+                    "selected": true,
+                    "text": "rpm/rpm-backend1",
+                    "value": "rpm/rpm-backend1"
                 },
                 "datasource": {
                     "type": "prometheus",
@@ -925,13 +1012,13 @@
         ]
     },
     "time": {
-        "from": "now-3h",
+        "from": "now-12h",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "",
     "title": "FHIR Observability Dashboard",
     "uid": "fhir-observability",
-    "version": 50,
+    "version": 80,
     "weekStart": ""
 }
